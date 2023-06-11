@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState } from "react";
 import Navbars from "../../dashboard/components/Navbar/Navbar";
 import Sidebar_dashbord from "../../dashboard/components/Sidebars/Sidebar_dashbord";
 import Table from 'react-bootstrap/Table';
@@ -14,25 +14,28 @@ import axios from "axios";
 import '../global.css'
 
 export default function Settings_dashbord() {
-  const [catgory,setCatgory] = useState('')
-  const addcatgory = ()=>{
+  const [inputcat,setInputcat] = useState()
+  const [error,setError] = useState()
+  console.log(inputcat);
+  // console.log(error);
+
+  const sendCat = ()=> {
+  if(!inputcat){
+   
+    alert('کونی پدرسگ')
+  }else{
+    axios.post('http://192.168.43.199:5000/admin/setCat',{titel:inputcat}).then(res => {
+      setError(res.status)
+    }).catch((e)=> console.log(e))
   }
- 
-  useEffect(()=>{
-    async function send(){
-      await axios.post('http://localhost:5000/admin/setCat',{
-        titel:'slam'
-      })
-    }
-  },[])
-  // const inputCat = (e) =>{
-  //   setCatgory(e.target.value)
-  //   console.log(e.target.value);
-  // }
+  } 
 
-
+React.useEffect(()=>{
+  sendCat()
+},[])
     return (
         <>
+        {error?console.log('eee'):console.log('first')}
           <Navbars />
           <div className="grid grid-rows-1 grid-cols-12">
             <div className="col-span-2">
@@ -72,8 +75,8 @@ export default function Settings_dashbord() {
             </div>
             <div>
               <p className="font-light pb-0">اضافه کردن دسته :</p>
-              <TextField id="standard-basic"  className="w-full" variant="standard" name="titel" onChange={inputCat} />
-              <button className="w-1/2 py-1 rounded mt-4 shadow-sm bg-green-800 text-white" onClick={send}>ذخیره</button>
+              <TextField id="standard-basic"  className="w-full" variant="standard" value={inputcat} onChange={e=> setInputcat(e.target.value) } />
+              <button className="w-1/2 py-1 rounded mt-4 shadow-sm bg-green-800 text-white" onClick={sendCat}>ذخیره</button>
             </div>
           </div>
         </AccordionDetails>
